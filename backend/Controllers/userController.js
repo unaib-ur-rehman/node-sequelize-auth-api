@@ -41,13 +41,13 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user.id);
       res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
       console.log("user", JSON.stringify(user, null, 2));
-      return res.status(201).send(user);
-    }
-    else if (user && !await bcrypt.compare(password, user.password)) {
+      console.log("token", token);
+      return res.status(201).json({ user, token }); // Include the token in the response
+    } else if (user && !(await bcrypt.compare(password, user.password))) {
       return res.status(401).send("Authentication failed");
     }
   } catch (error) {
@@ -55,6 +55,7 @@ const login = async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 };
+
 
 //get all the users
 const getAllUsers = async (req, res) => {

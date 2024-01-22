@@ -4,6 +4,7 @@ const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const db = require("./Model");
 const userRoutes = require("./Routes/userRoutes");
+const cors = require("cors");
 //setting up port
 const port = process.env.PORT || 5000;
 const app = express();
@@ -12,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 // In development, you may need to drop existing tables and re-sync database. So you can use force: true as code above.
 db.sequelize.sync().then(() => {
